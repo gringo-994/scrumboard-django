@@ -1,0 +1,52 @@
+<html>
+    {% load staticfiles %}
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Patua+One" rel="stylesheet">
+
+        <link rel="stylesheet" href="{% static 'css/board.css' %}">
+    </head>
+
+    <body>
+    <div class="navbar">
+        <ul class="nav">
+            <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+          <li class="choice-container"><a id="nav_choice" class="choice-link active" href="{%url 'dashboard' %}">My Dashboard</a></li>
+          <li class="choice-container" style="float:right"><a id="nav_choice" class="choice-link logout" href="{%url 'sign-out' %}">Logout</a></li>
+        </ul>
+    </div>
+    <div id="dashboard-container">
+        <div id="dashboard">
+            <div id="dashboard-header">
+                <h3 id="dashboard-title">Benvenuto nella Dashboard</h3>
+            </div>
+
+            {% if boards%}
+                <ul id="board-list">
+                  {% for board in boards %}
+                      <div id="display-inline"></div>
+                        <li id="board">
+                            <div id="board-header">
+                                <p id="board-title"><a id="board-title" href="{{ board.get_absolute_url }}">{{ board.name }}</a></p>
+                            </div>
+                        </li>
+                  {% endfor %}
+              </ul>
+
+            {% else %}
+                <div id="noBoard-message">
+                    <h3>Non sono presenti Board!</h3>
+                </div>
+
+            {% endif %}
+        </div>
+    </div>
+    <div id="add-button">
+        <a href={% url 'add-board' %}>
+            <button class="btn btn-success">Aggiungi board</button>
+        </a>
+    </div>
+    </body>
+</html>

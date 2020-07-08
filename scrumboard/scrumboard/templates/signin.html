@@ -1,0 +1,50 @@
+<html>
+    {% load staticfiles %}
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/basic-style.css' %}">
+    </head>
+
+    <body>
+        <div class="navbar">
+            <ul class="nav">
+                <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+              <li><a id="nav_choice" class="active" href="{%url 'sign-in' %}">Login</a></li>
+              <li><a id="nav_choice" href="{%url 'sign-up' %}">Registrazione</a></li>
+            </ul>
+        </div>
+
+        <div id="container-sign">
+            <div id="header">
+                <div id="branding">
+                    <h1 id="Sign-in_title">Login</h1>
+                </div>
+            </div>
+
+            <div id="content-main">
+
+              <form id="login-form" action="{%url 'sign-in' %}" method="post">
+
+                {% csrf_token %}
+                  {% for field in form %}
+                    <div class="form-row">
+                        <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                  {% endfor %}
+
+                {% if form.errors %}
+                    {{ form.non_field_errors }}
+                {% endif %}
+
+                <div class="submit-row">
+                    <button class="btn btn-primary btn-access" type="submit">Sign In</button>
+                </div>
+              </form>
+
+            </div>
+        </div>
+    </body>
+</html>

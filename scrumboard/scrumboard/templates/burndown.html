@@ -1,0 +1,65 @@
+
+<html>
+{% load staticfiles %}
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/basic-style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/board.css' %}">
+    </head>
+    <body>
+        <div class="navbar">
+            <ul class="nav">
+                <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+                <li class="choice-container"><a id="nav_choice" class="choice-link active" href="{%url 'dashboard' %}">My Dashboard</a></li>
+                <li class="choice-container" style="float:right"><a id="nav_choice" class="choice-link logout" href="{%url 'sign-out' %}">Logout</a></li>
+            </ul>
+        </div>
+
+        <div id="buttons-container">
+            <a href="{{ board.get_absolute_url }}"><button class="btn btn-primary btn-access">Torna alla board</button></a>
+        </div>
+
+        <div id="container">
+
+            <div id="header">
+                <div id="branding">
+                    <h1 id="Sign-in_title">Burndown</h1>
+                </div>
+            </div>
+
+            <div style="text-align: center" id="content-main-burndown">
+            <p class="field-burndown">Numero card per colonna:</p>
+            <div class="cardXColumn-container">
+                <table class="table table-condensed">
+                    <thead>
+                      <tr>
+                        <th>Nome colonna</th>
+                        <th>numero card</th>
+                      </tr>
+                    </thead>
+                    <tbody style="text-align: center">
+                        {%for elem in numCardColumn %}
+                            <tr>
+                                <td>{{ elem.columnname }}</td>
+                                <td>{{ elem.num }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+                <p class="field-burndown">Numero totale card:</p>
+                <p class="field-burndown-info">{{cardNum}}</p>
+                <p class="field-burndown">Numero totale card scadute:</p>
+                <p class="field-burndown-info">{{ cardExpire }}</p>
+                <p class="field-burndown">Numero totale di story points:</p>
+                {% if numStoryPoints != None %}
+                    <p class="field-burndown-info">{{  numStoryPoints }}</p>
+                {% else %}
+                    <p class="field-burndown-info">0</p>
+                {% endif %}
+            </div>
+        </div>
+    </body>
+</html>

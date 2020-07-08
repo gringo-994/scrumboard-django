@@ -1,0 +1,123 @@
+{% load staticfiles %}
+<html>
+<head>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/basic-style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/board.css' %}">
+    <link rel="stylesheet" href="{% static 'css/toggle.css' %}">
+</head>
+
+<body>
+    <div class="navbar">
+        <ul class="nav">
+            <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+            <li class="choice-container"><a id="nav_choice" class="choice-link active" href="{%url 'dashboard' %}">My Dashboard</a></li>
+            <li class="choice-container" style="float:right"><a id="nav_choice" class="choice-link logout" href="{%url 'sign-out' %}">Logout</a></li>
+        </ul>
+    </div>
+
+    <div id="buttons-container">
+        <a href="{{ board.get_absolute_url }}"><button class="btn btn-primary btn-distance">Torna alla board</button></a>
+        <a href="{{ column.get_addCardReturnColumn_url }}"><button class="btn btn-primary btn-distance">Aggiungi Card</button></a>
+    </div>
+
+    <div id="container">
+        <div id="header-column-detail">
+            <div class="row">
+                <div class="col-sm-8 centered">
+                  <h1 style="display: inline-block" id="Sign-in_title">Modifica {{ column.name }}</h1>
+                </div>
+
+                <div class="col-sm-3">
+                    <div class="switch-pos">
+                        <div class="onoffswitch">
+                            {{ formModify.checkbox }}
+                            <label class="onoffswitch-label" for={{ formModify.checkbox.id_for_label }}>
+                                <span class="onoffswitch-inner"></span>
+                                <span class="onoffswitch-switch"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="content-main">
+              <form id="login-form" action="{{ column.get_modifyNamePost_url }}" method="post">
+                {% csrf_token %}
+                  {% for field in formModify %}
+                    <div class="form-row">
+                        {% if field == formModify.newName %}
+                            <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div id="error_message">
+                                    <p>{{ field.errors }}</p>
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div style="visibility: hidden">
+                                {{ field }}
+                            </div>
+                        {% endif %}
+                    </div>
+                  {% endfor %}
+                  {% if errorsexcept%}
+                    <div class="submit-row"  style="visibility:visible" id="id_buttonC">
+                          <button class="btn btn-primary btn-access" type="submit">Modifica</button>
+                    </div>
+                  {% else %}
+                      <div class="submit-row"  style="visibility:hidden" id="id_buttonC">
+                          <button class="btn btn-primary btn-access" type="submit">Modifica</button>
+                      </div>
+                  {% endif %}
+              </form>
+        </div>
+    </div>
+
+    <div id="column-detail-container">
+        <div id="header">
+            <div id="branding">
+                <h1 id="Sign-in_title">Lista cards [{{ column.name }}]</h1>
+            </div>
+        </div>
+        <div class="column-body">
+            <ul class="card-list">
+                {% for card in cards %}
+                    <div class="card-container-column-detail">
+                        <div class="card-header-column-container">
+                            <a id="card-title" href="{{ card.card.get_absolute_url }}">{{ card.card.title }}</a>
+                        </div>
+
+                        <div class="card-body-column-container">
+                            <p class="field-card-body">Descrizione:</p>
+                            <p>{{ card.card.description }}</p>
+                            <p class="field-card-body">Data creazione:</p>
+                            <p>{{ card.card.dateCreation }}</p>
+                            <p class="field-card-body">Data scadenza</p>
+                            <p>{{ card.card.dateExpire }}</p>
+                            <p class="field-card-body">Story points</p>
+                            <p>{{ card.card.storyPoints }}</p>
+                        </div>
+                        <div class="del-card-btn-container">
+                            <form action="{{ column.get_deleteCard_url }}" method="POST">
+                                {% csrf_token %}
+                                {{card.formDelete}}
+                                <button type="submit" class="btn btn-danger btn-del">Elimina card</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{#    <div class="action-buttons-column-container">#}
+{#        <div class="btn-column-detail-container">#}
+{#            <a href="{{ column.get_addCardReturnColumn_url }}"><button class="btn btn-primary">Aggiungi Card</button></a>#}
+{#        </div>#}
+{#        <div class="btn-column-detail-container">#}
+{#        </div>#}
+{#    </div>#}
+</body>
+</html>

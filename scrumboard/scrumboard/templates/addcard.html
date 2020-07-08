@@ -1,0 +1,76 @@
+
+<html>
+    {% load staticfiles %}
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/basic-style.css' %}">
+
+          <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+          <link rel="stylesheet" href="/resources/demos/style.css">
+          <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+          <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+          <script>
+              $( function() {
+                $( "#datepicker" ).datepicker({
+                    dateFormat: "yy-mm-dd"
+                });
+              } );
+          </script>
+    </head>
+
+    <body>
+        <div class="navbar">
+            <ul class="nav">
+                <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+                <li class="choice-container"><a id="nav_choice" class="choice-link active" href="{%url 'dashboard' %}">My Dashboard</a></li>
+                <li class="choice-container" style="float:right"><a id="nav_choice" class="choice-link logout" href="{%url 'sign-out' %}">Logout</a></li>
+            </ul>
+        </div>
+
+        <div id="buttons-container">
+            {% if retcolumn%}
+            <a href="{{ column.get_absolute_url }}"><button class="btn btn-primary btn-access">Torna alla colonna</button></a>
+
+            {% else %}
+             <a href="{{ board.get_absolute_url }}"><button class="btn btn-primary btn-access">Torna alla board</button></a>
+            {% endif %}
+
+        </div>
+
+        <div id="container">
+            <div id="header">
+                <div id="branding">
+                    <h1 id="Sign-in_title">Aggiungi card</h1>
+                </div>
+            </div>
+
+            <div id="content-main">
+
+          <form id="login-form" action="{{column.get_addCardPost_url}}" method="post">
+            {% csrf_token %}
+              {% for field in form %}
+                  {% if field == form.title or field == form.description or field == form.dateExpired or field == form.storyPoints%}
+                      <div class="form-row">
+                        <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                      </div>
+                      {% if field.errors %}
+                            {{ field.errors }}
+                      {% endif %}
+                  {% else %}
+                      <div style="visibility: hidden">
+                        {{ field }}
+                      </div>
+                  {% endif %}
+              {% endfor %}
+            <div class="submit-row">
+                <button class="btn btn-primary btn-access" type="submit">Aggiungi</button>
+            </div>
+          </form>
+
+            </div>
+        </div>
+    </body>
+</html>

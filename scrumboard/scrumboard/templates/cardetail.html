@@ -1,0 +1,182 @@
+<html>
+    {% load staticfiles %}
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="{% static 'css/basic-style.css' %}">
+        <link rel="stylesheet" href="{% static 'css/board.css' %}">
+        <link rel="stylesheet" href="{% static 'css/card-detail.css' %}">
+        <link rel="stylesheet" href="{% static 'css/toggle.css' %}">
+        <link rel="stylesheet" href="{% static 'css/user.css' %}">
+
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="/resources/demos/style.css">
+        <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+        <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+        <script>
+          $( function() {
+            $( "#datepicker" ).datepicker({
+                dateFormat: "yy-mm-dd"
+            });
+          } );
+        </script>
+    </head>
+
+    <body>
+        <div class="navbar">
+            <ul class="nav">
+                <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+                <li class="choice-container"><a id="nav_choice" class="choice-link active" href="{%url 'dashboard' %}">My Dashboard</a></li>
+                <li class="choice-container" style="float:right"><a id="nav_choice" class="choice-link logout" href="{%url 'sign-out' %}">Logout</a></li>
+            </ul>
+        </div>
+
+        <div id="buttons-container">
+            <a href="{{ board.get_absolute_url }}"><button class="btn btn-primary btn-distance">Torna alla board</button></a>
+            <a href="{{ column.get_absolute_url }}"><button class="btn btn-primary btn-distance">Torna alla colonna</button></a>
+        </div>
+
+        <div class="card-detail-container">
+            <div class="card-detail-field-mod">
+                <div id="container-card-mod-form">
+                    <div id="header-column-detail">
+                        <div class="row">
+                            <div class="col-sm-8 centered">
+                              <h1 style="display: inline-block" id="Sign-in_title">Modifica {{ card.title }}</h1>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="switch-pos">
+                                    <div class="onoffswitch">
+                                        {{ formModify.checkbox }}
+                                        <label class="onoffswitch-label" for={{ formModify.checkbox.id_for_label }}>
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="content-main">
+                          <form id="login-form" action="{{ card.get_modifyCardPost_url }}" method="post">
+                            {% csrf_token %}
+                              {% for field in formModify %}
+                                <div class="form-row">
+                                    {% if field == formModify.newTitle or field == formModify.newdescription or field == formModify.newDateExpired or field == formModify.newStoryPoints or field == formModify.newColumn %}
+
+                                        <label class="field-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                        {{ field }}
+                                        {% if field.errors %}
+                                                <p>{{ field.errors }}</p>
+                                        {% endif %}
+
+                                    {% else %}
+                                        <div style="visibility: hidden">
+                                            {{ field }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                              {% endfor %}
+                              {% if errorsexcept%}
+                                <div class="submit-row"  style="visibility:visible" id="id_buttonB">
+                                      <button class="btn btn-primary btn-access" type="submit">Modifica</button>
+                                </div>
+                              {% else %}
+                                  <div class="submit-row"  style="visibility:hidden" id="id_buttonB">
+                                      <button class="btn btn-primary btn-access" type="submit">Modifica</button>
+                                  </div>
+                              {% endif %}
+                          </form>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card-detail-user-mod">
+                <div class="user-card-list-container">
+                    <ul class="users-card-to-delete-list">
+
+                        <div class="users-header">
+                            <h3 class="title-header-users">Utenti Card</h3>
+                        </div>
+
+                        {% if formListDel %}
+
+                            <div class="users-info">
+                            {% for f in formListDel %}
+                                <div class="users-info-container">
+                                    <div class="users-info-details">
+                                        <div class="users-info-field">
+                                            <span class="users-field">Username:</span>
+                                            <span class="users-field-attribute">{{ f.user.username }}</span>
+                                        </div>
+
+                                        <div class="users-info-field">
+                                            <span class="users-field">E-mail:    </span>
+                                            <span class="users-field-attribute">{{ f.user.email }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="users-action-button">
+                                        <form action="{{ board.get_addUserToCardPost_url }}" method="post">
+                                            {% csrf_token %}
+                                            {{f.form}}
+                                            <button class="btn btn-danger" type="submit" >Elimina</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        {% else %}
+
+                            <p class="no-users-message">Nessun utente nella lista!</p>
+
+                        {% endif %}
+                    </ul>
+
+                    <ul class="users-card-to-add-list">
+
+                        <div class="users-header">
+                            <h3 class="title-header-users">Utenti Board</h3>
+                        </div>
+
+                        {% if formListAdd %}
+                            <div class="users-info">
+                            {% for f in formListAdd %}
+                                <div class="users-info-container">
+                                    <div class="users-info-details">
+                                        <div class="users-info-field">
+                                            <span class="users-field">Username:</span>
+                                            <span class="users-field-attribute">{{ f.user.username }}</span>
+                                        </div>
+
+                                        <div class="users-info-field">
+                                            <span class="users-field">E-mail:    </span>
+                                            <span class="users-field-attribute">{{ f.user.email }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="users-action-button">
+                                        <form action="{{  card.get_addUserToCardPost_url }}" method="post">
+                                            {% csrf_token %}
+                                            {{f.form}}
+                                            <button class="btn btn-success" type="submit">Aggiungi</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            </div>
+                        {% else %}
+
+                            <p class="no-users-message">Nessun utente nella lista!</p>
+
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

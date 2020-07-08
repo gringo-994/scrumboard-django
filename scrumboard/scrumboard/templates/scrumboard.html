@@ -1,0 +1,85 @@
+<html>
+    {% load staticfiles %}
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Patua+One" rel="stylesheet">
+
+        <link rel="stylesheet" href="{% static 'css/board.css' %}">
+    </head>
+
+    <body>
+        <div class="navbar">
+            <ul class="nav">
+                <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+              <li class="choice-container"><a id="nav_choice" class="choice-link active" href="{%url 'dashboard' %}">My Dashboard</a></li>
+              <li class="choice-container" style="float:right"><a id="nav_choice" class="choice-link logout" href="{%url 'sign-out' %}">Logout</a></li>
+            </ul>
+        </div>
+
+        <div id="buttons-container">
+            <a href="{{ board.get_addUserToBoard_url }}"><button class="btn btn-primary btn-scrumboard">Aggiungi utente</button></a>
+            <a href="{{ board.get_addColumn_url }}"><button class="btn btn-primary btn-scrumboard">Aggiungi colonna</button></a>
+            <a href="{{ board.get_burndown_url }}"><button class="btn btn-primary">Burndown</button></a>
+        </div>
+
+        <div id="scrumboard-container">
+             <div id="dashboard">
+                <div id="dashboard-header">
+                    <h3 id="dashboard-title">{{ board.name }}</h3>
+                </div>
+
+                 <ul class="column-list">
+                    {% for column_data in columns_data %}
+                        <div class="column-container">
+
+                            <div class="column-header">
+                                <a id="link-column-name" href="{{ column_data.column.get_absolute_url }}">{{ column_data.column.name }}</a>
+                            </div>
+
+                            <div class="column-body">
+
+                                <ul class="card-list">
+                                    {% for card in column_data.cards %}
+                                        <div class="card-container">
+                                            <div class="card-header">
+                                                <a id="card-title" href="{{ card.get_absolute_url }}">{{ card.title }}</a>
+                                            </div>
+
+                                            <div class="card-body">
+                                                <p class="field-card-body">Descrizione:</p>
+                                                <p>{{ card.description }}</p>
+                                                <p class="field-card-body">Data creazione:</p>
+                                                <p>{{ card.dateCreation }}</p>
+                                                <p class="field-card-body">Data scadenza</p>
+                                                <p>{{ card.dateExpire }}</p>
+                                                <p class="field-card-body">Story points</p>
+                                                <p>{{ card.storyPoints }}</p>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+
+                            <div class="add-card-btn-container">
+                                <a href="{{ column_data.column.get_addCardReturnBoard_url }}"><button class="btn btn-primary">Aggiungi Card</button></a>
+                            </div>
+
+                            <div class="add-card-btn-container">
+                                <form action="{{ board.get_deleteColumn_url }}" method="post">
+                                    {% csrf_token %}
+                                    {{column_data.formDelete}}
+                                    <button type="submit" class="btn btn-danger">Elimina Colonna</button></a>
+                                </form>
+                            </div>
+                        </div>
+
+                    {% endfor %}
+                 </ul>
+
+             </div>
+        </div>
+
+    </body>
+</html>

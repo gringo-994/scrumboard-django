@@ -1,0 +1,110 @@
+
+<html>
+    {% load staticfiles %}
+    <head>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Patua+One" rel="stylesheet">
+
+        <link rel="stylesheet" href="{% static 'css/board.css' %}">
+        <link rel="stylesheet" href="{% static 'css/user.css' %}">
+    </head>
+
+    <body>
+
+        <div class="navbar">
+            <ul class="nav">
+                <li class="title-bar"><h2 class="title">Scrumboard</h2></li>
+              <li class="choice-container"><a id="nav_choice" class="choice-link active" href="{%url 'dashboard' %}">My Dashboard</a></li>
+              <li class="choice-container" style="float:right"><a id="nav_choice" class="choice-link logout" href="{%url 'sign-out' %}">Logout</a></li>
+            </ul>
+        </div>
+
+        <div id="buttons-container">
+            <a href="{{ board.get_absolute_url }}"><button class="btn btn-primary">Torna alla board</button></a>
+        </div>
+
+        <div class="user-list-container">
+
+            <ul class="users-to-delete-list">
+
+                <div class="users-header">
+                    <h3 class="title-header-users">Utenti Board</h3>
+                </div>
+
+                {% if formListDel %}
+
+                    <div class="users-info">
+                    {% for f in formListDel %}
+                        <div class="users-info-container">
+                            <div class="users-info-details">
+                                <div class="users-info-field">
+                                    <span class="users-field">Username:</span>
+                                    <span class="users-field-attribute">{{ f.user.username }}</span>
+                                </div>
+
+                                <div class="users-info-field">
+                                    <span class="users-field">E-mail:    </span>
+                                    <span class="users-field-attribute">{{ f.user.email }}</span>
+                                </div>
+                            </div>
+
+                            <div class="users-action-button">
+                                <form action="{{ board.get_addUserToCardPost_url }}" method="post">
+                                    {% csrf_token %}
+                                    {{f.form}}
+                                    <button class="btn btn-danger" type="submit">Elimina</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+
+                    <p class="no-users-message">Nessun utente nella lista!</p>
+
+                {% endif %}
+            </ul>
+
+            <ul class="users-to-add-list">
+
+                <div class="users-header">
+                    <h3 class="title-header-users">Utenti registrati</h3>
+                </div>
+
+                {% if formListAdd %}
+                    <div class="users-info">
+                    {% for f in formListAdd %}
+                        <div class="users-info-container">
+                            <div class="users-info-details">
+                                <div class="users-info-field">
+                                    <span class="users-field">Username:</span>
+                                    <span class="users-field-attribute">{{ f.user.username }}</span>
+                                </div>
+
+                                <div class="users-info-field">
+                                    <span class="users-field">E-mail:    </span>
+                                    <span class="users-field-attribute">{{ f.user.email }}</span>
+                                </div>
+                            </div>
+
+                            <div class="users-action-button">
+                                <form action="{{  board.get_addUserToCardPost_url}}" method="post">
+                                    {% csrf_token %}
+                                    {{f.form}}
+                                    <button class="btn btn-success" type="submit">Aggiungi</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% else %}
+
+                    <p class="no-users-message">Nessun utente nella lista!</p>
+
+                {% endif %}
+            </ul>
+        </div>
+    </body>
+</html>
